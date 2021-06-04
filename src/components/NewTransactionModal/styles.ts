@@ -1,3 +1,4 @@
+import { darken, transparentize } from 'polished';
 import Modal from "react-modal";
 import styled from 'styled-components';
 
@@ -51,5 +52,53 @@ export const Container = styled(Modal)`
             filter: brightness(0.9);
          }
       }
+   }
+`;
+
+export const TypeContainer = styled.div`
+   margin: 1rem 0;
+
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 0.5rem;
+`;
+
+interface IButtonProp{
+   isClicked: boolean;
+   clickedColor: 'green' | 'red';
+}
+
+const colors = {
+   green: '#33cc95',
+   red: '#e53e4d'
+}
+
+export const Button = styled.button<IButtonProp>`
+   height: 4rem;
+   border: 1px solid #d7d7d7;
+   border-radius: 0.25rem;
+
+   background: ${({isClicked, clickedColor}: IButtonProp) => isClicked ?  transparentize(0.9,colors[clickedColor]) : 'transparent'};
+
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   transition: border-color 0.2s;
+
+   &:hover{
+      border-color: ${darken(0.1, '#d7d7d7')};
+   }
+
+   img{
+      width: 20px;
+      height: 20px;
+   }
+
+   span{
+      display: inline-block;
+      margin-left: 1rem;
+      font-size: 1rem;
+      color: var(--text-title);
    }
 `;

@@ -1,5 +1,8 @@
+import { useState } from "react";
 import closeImg from "../../assets/close.svg";
-import { Container } from "./styles";
+import incomeImg from "../../assets/income.svg";
+import outcomeImg from "../../assets/outcome.svg";
+import { Button, Container, TypeContainer } from "./styles";
 
 interface INewTransactionModalProps {
   isOpen: boolean;
@@ -10,6 +13,8 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: INewTransactionModalProps) {
+  const [type, setType] = useState("deposit");
+
   return (
     <Container
       isOpen={isOpen}
@@ -28,6 +33,32 @@ export function NewTransactionModal({
       <form>
         <input placeholder="Titulo" />
         <input placeholder="Valor" type="number" />
+
+        <TypeContainer>
+          <Button
+            isClicked={type === "deposit"}
+            clickedColor="green"
+            type="button"
+            onClick={() => {
+              setType("deposit");
+            }}
+          >
+            <img src={incomeImg} alt="deposito" />
+            <span>Entrada</span>
+          </Button>
+          <Button
+            isClicked={type === "withdraw"}
+            clickedColor="red"
+            type="button"
+            onClick={() => {
+              setType("withdraw");
+            }}
+          >
+            <img src={outcomeImg} alt="saque" />
+            <span>Saída</span>
+          </Button>
+        </TypeContainer>
+
         <input placeholder="Categoria" />
 
         <button type="submit">Cadastrar</button>
