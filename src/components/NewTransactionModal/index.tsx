@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { AxiosError } from "axios";
+import { FormEvent, useState } from "react";
 import closeImg from "../../assets/close.svg";
 import incomeImg from "../../assets/income.svg";
 import outcomeImg from "../../assets/outcome.svg";
+import { axiosClient } from "../../services/axiosClient";
 import { Button, Container, TypeContainer } from "./styles";
 
 interface INewTransactionModalProps {
@@ -14,6 +16,28 @@ export function NewTransactionModal({
   onRequestClose,
 }: INewTransactionModalProps) {
   const [type, setType] = useState("deposit");
+
+  const [title, setTitle] = useState("");
+  const [value, setValue] = useState(0);
+  const [category, setCategory] = useState("");
+
+  async function handleCreateNewTransaction(event: FormEvent) {
+    event.preventDefault();
+    const dataNewTransaction = {
+      title,
+      value,
+      category,
+      type,
+    };
+
+    try {
+      await axiosClient.post("/transactions", dataNewTransaction);
+      onRequestClose();
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      alert(axiosError.response?.data.message);
+    }
+  }
 
   return (
     <Container
@@ -30,9 +54,22 @@ export function NewTransactionModal({
         <img src={closeImg} alt="close" />
       </button>
       <h2>Cadatrar transação</h2>
-      <form>
-        <input placeholder="Titulo" />
-        <input placeholder="Valor" type="number" />
+      <form onSubmit={handleCreateNewTransaction}>
+        <input
+          placeholder="Titulo"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+        />
+        <input
+          placeholder="Valor"
+          type="number"
+          value={value}
+          onChange={(e) => {
+            setValue(Number(e.target.value));
+          }}
+        />
 
         <TypeContainer>
           <Button
@@ -59,7 +96,13 @@ export function NewTransactionModal({
           </Button>
         </TypeContainer>
 
-        <input placeholder="Categoria" />
+        <input
+          placeholder="Categoria"
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+          }}
+        />
 
         <button type="submit">Cadastrar</button>
       </form>
