@@ -1,6 +1,37 @@
+import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
+import { axiosClient } from "../../services/axiosClient";
 import { Container } from "./styles";
 
+type ITransactions = {
+  id: number;
+  title: string;
+  amount: number;
+  category: string;
+  createdAt: Date;
+  type: "deposit" | "withdraw";
+};
+
 export function TransactionsTable() {
+  const [transactions, setTransactions] = useState<ITransactions[]>([]);
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const { data } = await axiosClient.get<ITransactions[]>(
+          "/transactions"
+        );
+        console.log({
+          dataResponde: data,
+        });
+        setTransactions(data);
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        alert(axiosError.response?.data.message);
+      }
+    }
+
+    loadData();
+  }, []);
   return (
     <Container>
       <table>
@@ -14,19 +45,15 @@ export function TransactionsTable() {
         </thead>
 
         <tbody>
-          <tr>
-            <td>Site Impacto Pet</td>
-            <td className="deposit">R$ 12.000,00</td>
-            <td>Freela</td>
-            <td>02/02/2021</td>
-          </tr>
-
-          <tr>
-            <td>Mercado</td>
-            <td className="withdraw">- R$ 1.200,00</td>
-            <td>Casa</td>
-            <td>02/02/2021</td>
-          </tr>
+          {transactions &&
+            transactions.map((transaction) => (
+              <tr key={transaction.id}>
+                <td>{transaction.title}</td>
+                <td className={transaction.type}>R$ {transaction.amount}</td>
+                <td>{transaction.category}</td>
+                <td>{transaction.createdAt}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </Container>
