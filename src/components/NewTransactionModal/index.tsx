@@ -1,9 +1,8 @@
-import { AxiosError } from "axios";
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import closeImg from "../../assets/close.svg";
 import incomeImg from "../../assets/income.svg";
 import outcomeImg from "../../assets/outcome.svg";
-import { axiosClient } from "../../services/axiosClient";
+import { TransactionsContexts } from "../../TransactionContext";
 import { Button, Container, TypeContainer } from "./styles";
 
 interface INewTransactionModalProps {
@@ -15,28 +14,29 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: INewTransactionModalProps) {
-  const [type, setType] = useState("deposit");
+  const { createTransaction } = useContext(TransactionsContexts);
 
+  const [type, setType] = useState<"deposit" | "withdraw">("deposit");
   const [title, setTitle] = useState("");
-  const [value, setValue] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState("");
 
   async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
-    const dataNewTransaction = {
+
+    await createTransaction({
       title,
-      value,
       category,
       type,
-    };
+      amount,
+    });
 
-    try {
-      await axiosClient.post("/transactions", dataNewTransaction);
-      onRequestClose();
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      alert(axiosError.response?.data.message);
-    }
+    setTitle("");
+    setCategory("");
+    setType("deposit");
+    setAmount(0);
+
+    onRequestClose();
   }
 
   return (
@@ -65,9 +65,9 @@ export function NewTransactionModal({
         <input
           placeholder="Valor"
           type="number"
-          value={value}
+          value={amount}
           onChange={(e) => {
-            setValue(Number(e.target.value));
+            setAmount(Number(e.target.value));
           }}
         />
 

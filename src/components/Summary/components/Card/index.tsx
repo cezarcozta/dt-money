@@ -1,5 +1,5 @@
+import { currencyBRFormatter } from "../../../../utils/BRCurrencyFormatter";
 import { Container } from "./styles";
-
 type ICard = {
   title: string;
   icon: string;
@@ -14,7 +14,7 @@ export function Card({ title, icon, value, isBalance }: ICard) {
         <p>{title}</p>
         <img src={icon} alt="icon" />
       </header>
-      <strong>R$ {value}</strong>
+      <strong>{currencyBRFormatter(value)}</strong>
     </Container>
   );
 }

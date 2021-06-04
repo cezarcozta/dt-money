@@ -1,34 +1,11 @@
-import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
-import { axiosClient } from "../../services/axiosClient";
+import { useContext } from "react";
+import { TransactionsContexts } from "../../TransactionContext";
 import { currencyBRFormatter } from "../../utils/BRCurrencyFormatter";
 import { dataBRFormatter } from "../../utils/BRISODateFormatter";
 import { Container } from "./styles";
 
-type ITransactions = {
-  id: number;
-  title: string;
-  amount: number;
-  category: string;
-  createdAt: Date;
-  type: "deposit" | "withdraw";
-};
-
 export function TransactionsTable() {
-  const [transactions, setTransactions] = useState<ITransactions[]>([]);
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const { data } = await axiosClient.get("/transactions");
-        setTransactions(data.transactions);
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        alert(axiosError.response?.data.message);
-      }
-    }
-
-    loadData();
-  }, []);
+  const { transactions } = useContext(TransactionsContexts);
   return (
     <Container>
       <table>

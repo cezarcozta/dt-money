@@ -21,7 +21,7 @@ createServer({
         {
           id: 2,
           title: "Transaction 2",
-          amount: -1200,
+          amount: 1200,
           type: "withdraw",
           category: "Categ 2",
           createdAt: new Date(),
