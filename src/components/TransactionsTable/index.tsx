@@ -1,6 +1,8 @@
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { axiosClient } from "../../services/axiosClient";
+import { currencyBRFormatter } from "../../utils/BRCurrencyFormatter";
+import { dataBRFormatter } from "../../utils/BRISODateFormatter";
 import { Container } from "./styles";
 
 type ITransactions = {
@@ -45,17 +47,10 @@ export function TransactionsTable() {
               <tr key={transaction.id}>
                 <td>{transaction.title}</td>
                 <td className={transaction.type}>
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(transaction.amount)}
+                  {currencyBRFormatter(transaction.amount)}
                 </td>
                 <td>{transaction.category}</td>
-                <td>
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(transaction.createdAt)
-                  )}
-                </td>
+                <td>{dataBRFormatter(transaction.createdAt)}</td>
               </tr>
             ))}
         </tbody>
