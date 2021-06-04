@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Header } from "./components/Header";
 import { NewTransactionModal } from "./components/NewTransactionModal";
+import { TransactionsProvider } from "./hooks/useTransactions";
 import { Dashboard } from "./pages/Dashboard";
 import { GlobalStyle } from "./styles/global";
-import { TransactionsProvider } from "./TransactionContext";
 
 export function App() {
   const [isNewTransactionModalOepn, setIsNewTransactionModalOpen] =

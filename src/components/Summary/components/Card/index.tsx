@@ -1,5 +1,6 @@
 import { currencyBRFormatter } from "../../../../utils/BRCurrencyFormatter";
 import { Container } from "./styles";
+
 type ICard = {
   title: string;
   icon: string;

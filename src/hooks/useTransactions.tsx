@@ -1,6 +1,12 @@
 import { AxiosError } from "axios";
-import { createContext, ReactNode, useEffect, useState } from "react";
-import { axiosClient } from "./services/axiosClient";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { axiosClient } from "../services/axiosClient";
 
 type ITransactions = {
   id: number;
@@ -25,7 +31,7 @@ type ITransactionsContext = {
   createTransaction: (transaction: ITransactionData) => Promise<void>;
 };
 
-export const TransactionsContexts = createContext<ITransactionsContext>(
+const TransactionsContexts = createContext<ITransactionsContext>(
   {} as ITransactionsContext
 );
 
@@ -97,4 +103,8 @@ export function TransactionsProvider({ children }: ITransactionsProviderProps) {
   );
 }
 
-export function useTransactions() {}
+export function useTransactions() {
+  const context = useContext(TransactionsContexts);
+
+  return context;
+}
