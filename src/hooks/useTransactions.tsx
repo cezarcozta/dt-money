@@ -29,6 +29,8 @@ type ITransactionsProviderProps = {
 type ITransactionsContext = {
   transactions: ITransactions[];
   createTransaction: (transaction: ITransactionData) => Promise<void>;
+  deleteTransaction: (id: number) => Promise<void>;
+  editTransaction: (transaction: ITransactions) => Promise<void>;
 };
 
 const TransactionsContexts = createContext<ITransactionsContext>(
@@ -88,14 +90,71 @@ export function TransactionsProvider({ children }: ITransactionsProviderProps) {
       ]);
     } catch (error) {
       const axiosError = error as AxiosError;
+      console.log({
+        error: axiosError,
+      });
       alert(axiosError.response?.data.message);
     }
   }
+
+  async function deleteTransaction(id: number) {
+    try {
+      await axiosClient.delete(`/transactions/${id}`);
+      setTransactions(
+        transactions.filter((transaction) => transaction.id !== id)
+      );
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.log({
+        error: axiosError,
+      });
+      alert(axiosError.response?.data.message);
+    }
+  }
+
+  async function editTransaction({
+    id,
+    title,
+    amount,
+    category,
+    type,
+    createdAt,
+  }: ITransactions) {
+    const updateTransaction = {
+      title,
+      amount,
+      category,
+      type,
+      createdAt: new Date(),
+    };
+    try {
+      const { data } = await axiosClient.put(
+        `/transactions/${id}`,
+        updateTransaction
+      );
+      if (!data) return;
+      const returnData = data as ITransactions;
+      setTransactions([
+        ...transactions.filter((transaction) => transaction.id !== id, {
+          returnData,
+        }),
+      ]);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.log({
+        error: axiosError,
+      });
+      alert(axiosError.response?.data.message);
+    }
+  }
+
   return (
     <TransactionsContexts.Provider
       value={{
         transactions,
         createTransaction,
+        deleteTransaction,
+        editTransaction,
       }}
     >
       {children}
