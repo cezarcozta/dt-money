@@ -26,6 +26,12 @@ export const Container = styled.div`
          background-color: var(--shape);
          color: var(--text-body);
 
+         button {
+            border: 0;
+            margin: 0.1rem;
+            background-color: transparent;
+         }
+
          &:first-child{
             color: var(--text-title);
          }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaPen, FaTrashAlt } from "react-icons/fa";
 import { useTransactions } from "../../hooks/useTransactions";
 import { currencyBRFormatter } from "../../utils/BRCurrencyFormatter";
 import { dataBRFormatter } from "../../utils/BRISODateFormatter";
@@ -6,6 +7,7 @@ import { EditTransactionModal } from "../EditTransactionModal";
 import { Container } from "./styles";
 
 export function TransactionsTable() {
+  const iconColor = "#969cb3";
   const { transactions, deleteTransaction } = useTransactions();
 
   const [editId, setEditId] = useState(-1);
@@ -32,7 +34,8 @@ export function TransactionsTable() {
             <th>Valor</th>
             <th>Categoria</th>
             <th>Data</th>
-            <th></th>
+            <th>Editar</th>
+            <th>Deletar</th>
           </tr>
         </thead>
 
@@ -47,11 +50,19 @@ export function TransactionsTable() {
                 <td>{transaction.category}</td>
                 <td>{dataBRFormatter(transaction.createdAt)}</td>
                 <td>
-                  <button onClick={() => handleEdit(transaction.id)}>
-                    Editar
+                  <button
+                    type="button"
+                    onClick={() => handleEdit(transaction.id)}
+                  >
+                    <FaPen color={iconColor} />
                   </button>
-                  <button onClick={() => handleRemove(transaction.id)}>
-                    Deletar
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(transaction.id)}
+                  >
+                    <FaTrashAlt color={iconColor} />
                   </button>
                 </td>
               </tr>
