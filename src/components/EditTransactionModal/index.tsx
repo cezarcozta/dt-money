@@ -37,13 +37,12 @@ export function EditTransactionModal({
   useEffect(() => {
     async function loadTransaction() {
       try {
-        const { data } = await axiosClient.get<ITransaction>(
-          `/transactions/${id}`
-        );
-        setType(data.type);
-        setTitle(data.title);
-        setAmount(data.amount);
-        setCategory(data.category);
+        const { data } = await axiosClient.get(`/transactions/${id}`);
+
+        setType(data.transaction.type);
+        setTitle(data.transaction.title);
+        setAmount(data.transaction.amount);
+        setCategory(data.transaction.category);
       } catch (error) {
         const axiosError = error as AxiosError;
         alert(axiosError.response?.data.message);
