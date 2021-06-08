@@ -32,16 +32,47 @@ createServer({
   routes() {
     this.namespace = "api";
 
-    this.get("/transactions", () => {
-      return this.schema.all("transaction");
+    //Get All
+    this.get("/transactions", (schema) => {
+      return schema.all("transaction");
     });
+    //Get One
+    this.get("/transactions/:id", (schema, request) => {
+      const id = request.params.id;
+      const transaction = schema.find("transaction", id);
 
+      if (!transaction) return new Response("500");
+
+      return transaction;
+    });
+    //Create
     this.post("/transactions", (schema, request) => {
       const data = JSON.parse(request.requestBody);
-      console.log({
-        data,
-      });
+
       return schema.create("transaction", data);
+    });
+    //Update
+    this.put("/transactions/:id", (schema, request) => {
+      const id = request.params.id;
+      const newData = JSON.parse(request.requestBody);
+      const transaction = schema.find("transaction", id);
+
+      if (!transaction) return new Response("500");
+
+      transaction.update(newData);
+
+      return new Response("200");
+    });
+    //Delete
+    this.delete("/transactions/:id", (schema, request) => {
+      const id = request.params.id;
+      const transaction = schema.find("transaction", id);
+
+      if (!transaction) return new Response("500");
+
+      transaction.destroy();
+
+      return new Response("200");
     });
   },
 });

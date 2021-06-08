@@ -125,20 +125,29 @@ export function TransactionsProvider({ children }: ITransactionsProviderProps) {
       amount,
       category,
       type,
-      createdAt: new Date(),
+      createdAt,
     };
     try {
-      const { data } = await axiosClient.put(
-        `/transactions/${id}`,
-        updateTransaction
+      await axiosClient.put(`/transactions/${id}`, updateTransaction);
+
+      setTransactions(
+        transactions.map((transaction) => {
+          if (transaction.id === id) {
+            const editTransaction = transaction;
+
+            editTransaction.amount = updateTransaction.amount;
+            editTransaction.category = updateTransaction.category;
+            editTransaction.createdAt = updateTransaction.createdAt;
+            editTransaction.id = id;
+            editTransaction.title = updateTransaction.title;
+            editTransaction.type = updateTransaction.type;
+
+            return editTransaction;
+          } else {
+            return transaction;
+          }
+        })
       );
-      if (!data) return;
-      const returnData = data as ITransactions;
-      setTransactions([
-        ...transactions.filter((transaction) => transaction.id !== id, {
-          returnData,
-        }),
-      ]);
     } catch (error) {
       const axiosError = error as AxiosError;
       console.log({

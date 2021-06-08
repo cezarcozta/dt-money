@@ -1,34 +1,67 @@
-import { FormEvent, useState } from "react";
+import { AxiosError } from "axios";
+import { FormEvent, useEffect, useState } from "react";
 import closeImg from "../../assets/close.svg";
 import incomeImg from "../../assets/income.svg";
 import outcomeImg from "../../assets/outcome.svg";
 import { useTransactions } from "../../hooks/useTransactions";
+import { axiosClient } from "../../services/axiosClient";
 import { Button, Container, TypeContainer } from "./styles";
 
-interface INewTransactionModalProps {
+type ITransaction = {
+  id: number;
+  title: string;
+  amount: number;
+  category: string;
+  createdAt: Date;
+  type: "deposit" | "withdraw";
+};
+
+interface IEditTransactionModal {
   isOpen: boolean;
   onRequestClose: () => void;
+  id: number;
 }
 
-export function NewTransactionModal({
+export function EditTransactionModal({
   isOpen,
   onRequestClose,
-}: INewTransactionModalProps) {
-  const { createTransaction } = useTransactions();
+  id,
+}: IEditTransactionModal) {
+  const { editTransaction } = useTransactions();
 
   const [type, setType] = useState<"deposit" | "withdraw">("deposit");
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState("");
 
-  async function handleCreateNewTransaction(event: FormEvent) {
+  useEffect(() => {
+    async function loadTransaction() {
+      try {
+        const { data } = await axiosClient.get<ITransaction>(
+          `/transactions/${id}`
+        );
+        setType(data.type);
+        setTitle(data.title);
+        setAmount(data.amount);
+        setCategory(data.category);
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        alert(axiosError.response?.data.message);
+      }
+    }
+    loadTransaction();
+  }, [id]);
+
+  async function handleEditTransaction(event: FormEvent) {
     event.preventDefault();
 
-    await createTransaction({
+    await editTransaction({
+      id,
       title,
       category,
       type,
       amount,
+      createdAt: new Date(),
     });
 
     setTitle("");
@@ -53,8 +86,8 @@ export function NewTransactionModal({
       >
         <img src={closeImg} alt="close" />
       </button>
-      <h2>Cadatrar transação</h2>
-      <form onSubmit={handleCreateNewTransaction}>
+      <h2>Editar transação</h2>
+      <form onSubmit={handleEditTransaction}>
         <input
           placeholder="Titulo"
           value={title}
@@ -104,7 +137,7 @@ export function NewTransactionModal({
           }}
         />
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit">Editar</button>
       </form>
     </Container>
   );
